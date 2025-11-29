@@ -1,0 +1,25 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+shop-client/node_modules
+shop-client/.pnp
+shop-client/.pnp.js
+
+# testing
+shop-client/coverage
+
+# production
+shop-client/build
+
+# misc
+shop-client/.DS_Store
+shop-client/.env.local
+shop-client/.env.development.local
+shop-client/.env.test.local
+shop-client/.env.production.local
+
+shop-client/npm-debug.log*
+shop-client/yarn-debug.log*
+shop-client/yarn-error.log*
+
+shop-server/.idea
