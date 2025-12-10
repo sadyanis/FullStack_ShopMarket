@@ -100,7 +100,7 @@ public class ProductService {
         return product.get();
     }
     @Transactional
-    public void setProductToShop(long productId, long shopId) throws Exception {
+    public Product setProductToShop(long productId, long shopId) throws Exception {
         Optional<Product> product = productRepository.findById(productId);
         Optional<Shop> shop = shopRepository.findById(shopId);
         if (!product.isPresent()|| !shop.isPresent()) {
@@ -111,6 +111,7 @@ public class ProductService {
         em.flush();
         em.refresh(product.get());
         em.refresh(shop.get());
+        return product.get();
 
     }
 
