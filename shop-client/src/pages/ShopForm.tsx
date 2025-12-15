@@ -35,6 +35,7 @@ const ShopForm = () => {
     const { setLoading } = useAppContext();
     const { setToast } = useToastContext();
     const [errors, setErrors] = useState<ObjectPropertyString<MinimalShop>>();
+    const [hours_valid, setHours_valid] = useState<boolean>(true);
     const [shop, setShop] = useState<MinimalShop>({
         name: '',
         inVacations: false,
@@ -93,12 +94,55 @@ const ShopForm = () => {
             ...openingHours[index],
             [key]: value,
         };
+        compare_hours(index, key, value);
         openingHours[index] = openingHour;
         setShop({ ...shop, openingHours });
     };
 
+    const compare_hours = (index: number, key: string, value: number | string | undefined): boolean => {
+        const openingHours_copie = [...shop.openingHours];
+        const openingHours = shop.openingHours;
+        const openingHour = {
+            ...openingHours[index],
+            [key]: value,
+        };
+
+        let is_hour_conflict = false;
+        is_hour_conflict = openingHours_copie.some((previous_hour: any, i: number) => {
+            if (i === index) return false;
+            return check_hour_conflict(previous_hour, openingHour);
+        });
+
+        if (is_hour_conflict) {
+            setToast({ severity: 'error', message: 'Conflit avec un autre horaire' });
+            setHours_valid(false);
+        } else setHours_valid(true);
+
+        return is_hour_conflict;
+    };
+
+    const check_hour_conflict = (horaire_1: any, horaire_2: any) => {
+        if (horaire_1.day !== horaire_2.day) return false;
+        if (horaire_1.openAt >= horaire_2.closeAt) return false;
+        if (horaire_2.openAt >= horaire_1.closeAt) return false;
+        return true;
+    };
+
     const handleClickAddHours = () => {
-        setShop({ ...shop, openingHours: [...shop.openingHours, { day: 1, openAt: '09:00:00', closeAt: '18:00:00' }] });
+        const new_hour = { day: 1, openAt: '09:00:00', closeAt: '18:00:00' };
+
+        let can_not_create_new_hour = true;
+
+        can_not_create_new_hour = shop.openingHours.some((existing_hour: any) =>
+            check_hour_conflict(existing_hour, new_hour),
+        );
+
+        if (can_not_create_new_hour) {
+            setToast({ severity: 'error', message: 'Conflit avec un autre horaire' });
+            setHours_valid(false);
+        }
+
+        setShop({ ...shop, openingHours: [...shop.openingHours, new_hour] });
     };
 
     const handleClickClearHours = (index: number) => {
@@ -228,7 +272,7 @@ const ShopForm = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="contained" onClick={handleSubmit}>
+                    <Button variant="contained" onClick={handleSubmit} disabled={!hours_valid}>
                         Valider
                     </Button>
                 </Box>
