@@ -17,7 +17,7 @@ import { Filters, ShopCard } from '../components';
 import { useAppContext } from '../context';
 import { ShopService } from '../services';
 import { ResponseArray, Shop } from '../types';
-
+import SearchBar from '../components/Navbar';
 const Home = () => {
     const navigate = useNavigate();
     const { setLoading } = useAppContext();
@@ -28,6 +28,16 @@ const Home = () => {
 
     const [sort, setSort] = useState<string>('');
     const [filters, setFilters] = useState<string>('');
+
+    const handleSearch = (searchText: string) => {
+        if (searchText) {
+            // remplacer la fonction fesant appel a elasticSearch
+            setFilters(`search:${encodeURIComponent(searchText)}`);
+        } else {
+            setFilters('');
+        }
+        setPageSelected(0);
+    };
 
     const getShops = () => {
         setLoading(true);
@@ -104,7 +114,7 @@ const Home = () => {
                         <MenuItem value="nbProducts">Nombre de produits</MenuItem>
                     </Select>
                 </FormControl>
-
+                <SearchBar onSearch={handleSearch} />
                 <Filters setUrlFilters={setFilters} setSort={setSort} sort={sort} />
             </Box>
 
