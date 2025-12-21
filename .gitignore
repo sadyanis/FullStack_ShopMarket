@@ -23,3 +23,5 @@ shop-client/yarn-debug.log*
 shop-client/yarn-error.log*
 
 shop-server/.idea
+# Maven Build output 
+shop-server/target/
