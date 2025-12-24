@@ -3,15 +3,14 @@ package fr.fullstack.shopapp.service;
 import fr.fullstack.shopapp.model.Product;
 import fr.fullstack.shopapp.model.Shop;
 import fr.fullstack.shopapp.repository.ShopRepository;
-import org.hibernate.search.mapper.orm.Search;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;  
+import jakarta.persistence.PersistenceContext;  
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +23,16 @@ public class ShopService {
     @Autowired
     private ShopRepository shopRepository;
 
+
+
     @Transactional
     public Shop createShop(Shop shop) throws Exception {
         try {
             Shop newShop = shopRepository.save(shop);
-            // Refresh the entity after the save. Otherwise, @Formula does not work.
             em.flush();
             em.refresh(newShop);
+            // ADDED (Indexer dans Elasticsearch)
+
             return newShop;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -41,14 +43,15 @@ public class ShopService {
     public void deleteShopById(long id) throws Exception {
         try {
             Shop shop = getShop(id);
-            // delete nested relations with products
             deleteNestedRelations(shop);
             shopRepository.deleteById(id);
+
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
+    @Transactional(readOnly = true)  // ADDED
     public Shop getShopById(long id) throws Exception {
         try {
             return getShop(id);
@@ -57,6 +60,7 @@ public class ShopService {
         }
     }
 
+    @Transactional(readOnly = true)  // ADDED
     public Page<Shop> getShopList(
             Optional<String> sortBy,
             Optional<Boolean> inVacations,
@@ -64,36 +68,50 @@ public class ShopService {
             Optional<String> createdAfter,
             Pageable pageable
     ) {
+        Page<Shop> result;
+        
         // SORT
         if (sortBy.isPresent()) {
             switch (sortBy.get()) {
                 case "name":
-                    return shopRepository.findByOrderByNameAsc(pageable);
+                    result = shopRepository.findByOrderByNameAsc(pageable);
+                    break;
                 case "createdAt":
-                    return shopRepository.findByOrderByCreatedAtAsc(pageable);
+                    result = shopRepository.findByOrderByCreatedAtAsc(pageable);
+                    break;
                 default:
-                    return shopRepository.findByOrderByNbProductsAsc(pageable);
+                    result = shopRepository.findByOrderByNbProductsAsc(pageable);
             }
+            return refreshShops(result);
         }
 
         // FILTERS
         Page<Shop> shopList = getShopListWithFilter(inVacations, createdBefore, createdAfter, pageable);
         if (shopList != null) {
-            return shopList;
+            return refreshShops(shopList);
         }
 
         // NONE
-        return shopRepository.findByOrderByIdAsc(pageable);
+        result = shopRepository.findByOrderByIdAsc(pageable);
+        return refreshShops(result);
     }
 
     @Transactional
     public Shop updateShop(Shop shop) throws Exception {
         try {
             getShop(shop.getId());
-            return this.createShop(shop);
+            Shop updatedShop = this.createShop(shop);
+
+            return updatedShop;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    
+    private Page<Shop> refreshShops(Page<Shop> shops) {
+        shops.getContent().forEach(shop -> em.refresh(shop));
+        return shops;
     }
 
     private void deleteNestedRelations(Shop shop) {
@@ -106,14 +124,20 @@ public class ShopService {
         }
     }
 
+    
     private Shop getShop(Long id) throws Exception {
         Optional<Shop> shop = shopRepository.findById(id);
         if (!shop.isPresent()) {
             throw new Exception("Shop with id " + id + " not found");
         }
-        return shop.get();
+        Shop foundShop = shop.get();
+        
+        em.refresh(foundShop);
+        
+        return foundShop;
     }
 
+    
     private Page<Shop> getShopListWithFilter(
             Optional<Boolean> inVacations,
             Optional<String> createdAfter,

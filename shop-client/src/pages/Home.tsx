@@ -28,21 +28,30 @@ const Home = () => {
 
     const [sort, setSort] = useState<string>('');
     const [filters, setFilters] = useState<string>('');
+    // Etats pour la recherche Elasticsearch
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     const handleSearch = (searchText: string) => {
-        if (searchText) {
-            // remplacer la fonction fesant appel a elasticSearch
-            setFilters(`search:${encodeURIComponent(searchText)}`);
-        } else {
-            setFilters('');
-        }
-        setPageSelected(0);
+        setSearchQuery(searchText);
+        setPageSelected(0); // Reset à la page 1
     };
 
     const getShops = () => {
         setLoading(true);
         let promisedShops: Promise<ResponseArray<Shop>>;
-        if (sort) {
+        if (searchQuery) {
+            const filterParams = parseFilters(filters);
+            promisedShops = ShopService.searchShops(
+                pageSelected,
+                9,
+                searchQuery,
+                filterParams.inVacations,
+                filterParams.createdAfter,
+                filterParams.createdBefore
+            );
+        }
+
+        else if (sort) {
             promisedShops = ShopService.getShopsSorted(pageSelected, 9, sort);
         } else if (filters) {
             promisedShops = ShopService.getShopsFiltered(pageSelected, 9, filters);
@@ -52,15 +61,39 @@ const Home = () => {
         promisedShops
             .then((res) => {
                 setShops(res.data.content);
+                console.log(res.data.content);
                 setCount(res.data.totalPages);
                 setPage(res.data.pageable.pageNumber + 1);
             })
             .finally(() => setLoading(false));
     };
+     const parseFilters = (filterString: string) => {
+        const params: {
+            inVacations?: boolean;
+            createdAfter?: string;
+            createdBefore?: string;
+        } = {};
+
+        if (!filterString) return params;
+
+        const filterPairs = filterString.split('&');
+        filterPairs.forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key === 'inVacations') {
+                params.inVacations = value === 'true';
+            } else if (key === 'createdAfter') {
+                params.createdAfter = value;
+            } else if (key === 'createdBefore') {
+                params.createdBefore = value;
+            }
+        });
+
+        return params;
+    };
 
     useEffect(() => {
         getShops();
-    }, [pageSelected, sort, filters]);
+    }, [pageSelected, sort, filters, searchQuery]);
 
     const handleChangePagination = (event: React.ChangeEvent<unknown>, value: number) => {
         setPageSelected(value - 1);
@@ -68,6 +101,7 @@ const Home = () => {
 
     const handleChangeSort = (event: SelectChangeEvent) => {
         setSort(event.target.value as string);
+        setSearchQuery('');
     };
 
     return (
@@ -115,7 +149,7 @@ const Home = () => {
                     </Select>
                 </FormControl>
                 <SearchBar onSearch={handleSearch} />
-                <Filters setUrlFilters={setFilters} setSort={setSort} sort={sort} />
+                <Filters setUrlFilters={setFilters} setSort={setSort} sort={sort} setSearchQuery={setSearchQuery} />
             </Box>
 
             {/* Shops */}

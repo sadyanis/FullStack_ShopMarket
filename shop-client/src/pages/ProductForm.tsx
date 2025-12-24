@@ -127,7 +127,7 @@ const ProductForm = () => {
             setProduct({ ...product, price: 0 });
             return;
         }
-        setProduct({ ...product, price: Number(convertedPrice.toFixed(2)) });
+        setProduct({ ...product, price: Math.round(convertedPrice * 100) });
     };
 
     const setShop = (shop: any) => {
@@ -204,7 +204,7 @@ const ProductForm = () => {
                         required
                         type="number"
                         label="Prix"
-                        value={product.price.toString()}
+                        value={((product.price)/100).toString()}
                         onChange={(e) => setPrice(e.target.value)}
                         fullWidth
                         InputProps={{

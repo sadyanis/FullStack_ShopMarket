@@ -2,13 +2,16 @@ package fr.fullstack.shopapp.controller;
 
 import fr.fullstack.shopapp.model.Shop;
 import fr.fullstack.shopapp.service.ShopService;
+import fr.fullstack.shopapp.service.shopSearchService;
 import fr.fullstack.shopapp.util.ErrorValidation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -32,6 +37,8 @@ public class ShopController {
     // TODO ADD PLAIN TEXT SEARCH FOR SHOP
     @Autowired
     private ShopService service;
+    @Autowired
+    private shopSearchService searchService;
 
     @Operation(summary = "Create a shop")
     @PostMapping
@@ -109,5 +116,24 @@ public ResponseEntity<Page<Shop>> getAllShops(
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+    @Operation(summary = "Searche for shops using elasticsearch")
+    @GetMapping("/search")
+    public ResponseEntity<Page<Shop>> searchShops(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Boolean inVacations,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAfter,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdBefore,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Shop> shops = searchService.searchShops(
+                query, inVacations, createdAfter, createdBefore, pageable
+        );
+
+        return ResponseEntity.ok(shops);
+
     }
 }

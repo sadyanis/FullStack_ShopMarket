@@ -43,9 +43,10 @@ type Props = {
     setUrlFilters: Dispatch<SetStateAction<string>>;
     setSort: Dispatch<SetStateAction<string>>;
     sort: string;
+    setSearchQuery?: Dispatch<SetStateAction<string>>;
 };
 
-const Filters = ({ setUrlFilters, setSort, sort }: Props) => {
+const Filters = ({ setUrlFilters, setSort, sort, setSearchQuery }: Props) => {
     const defaultFilters: FiltersType = {
         inVacations: '',
         createdAfter: null,
@@ -77,6 +78,7 @@ const Filters = ({ setUrlFilters, setSort, sort }: Props) => {
         setUrlFilters(transformFiltersToURL(filters));
         setSort('');
         setOpen(false);
+        if (setSearchQuery) setSearchQuery('');
     };
 
     return (

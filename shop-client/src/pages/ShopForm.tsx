@@ -61,7 +61,8 @@ const ShopForm = () => {
                 navigate('/');
                 setToast({ severity: 'success', message: 'La boutique a bien été créée' });
             })
-            .catch(() => {
+            .catch((e) => {
+                console.log(e);
                 setToast({ severity: 'error', message: 'Une erreur est survenue lors de la création' });
             })
             .finally(() => {
