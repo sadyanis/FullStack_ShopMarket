@@ -35,37 +35,79 @@ const Products = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-            <Typography variant="h2">Les produits</Typography>
+        <Box 
+            sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                gap: { xs: 3, md: 5 } // Réduit l'espacement vertical sur mobile
+            }}
+        >
+            {/* Titre responsive */}
+            <Typography 
+                variant="h2" 
+                sx={{ 
+                    fontSize: { xs: '2rem', md: '3.75rem' }, 
+                    textAlign: 'center' 
+                }}
+            >
+                Les produits
+            </Typography>
 
+            {/* Bouton Ajouter : Centré sur mobile, à droite sur Desktop */}
             <Box
                 sx={{
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'row',
-                    justifyContent: 'flex-end',
+                    justifyContent: { xs: 'center', md: 'flex-end' },
                 }}
             >
-                <Fab variant="extended" color="primary" aria-label="add" onClick={() => navigate('/product/create')}>
+                <Fab 
+                    variant="extended" 
+                    color="primary" 
+                    aria-label="add" 
+                    onClick={() => navigate('/product/create')}
+                    size="medium" // Taille standard, adaptable si besoin
+                >
                     <AddIcon sx={{ mr: 1 }} />
                     Ajouter un produit
                 </Fab>
             </Box>
 
-            {/* Products */}
-            <Grid container alignItems="center" rowSpacing={3} columnSpacing={3}>
+            {/* Products Grid */}
+            {/* alignItems="stretch" permet aux cartes d'avoir la même hauteur sur une même ligne */}
+            <Grid container alignItems="stretch" rowSpacing={3} columnSpacing={3}>
                 {products?.map((product) => (
-                    <Grid item key={product.id} xs={4}>
-                        <ProductCard product={product} displayShop={true} />
+                    <Grid 
+                        item 
+                        key={product.id} 
+                        xs={12} // Mobile : 1 colonne (Pleine largeur)
+                        sm={6}  // Tablette : 2 colonnes
+                        md={4}  // Desktop : 3 colonnes
+                    >
+                        {/* Box optionnelle pour garantir la hauteur 100% si le composant Card ne le fait pas */}
+                        <Box sx={{ height: '100%' }}>
+                            <ProductCard product={product} displayShop={true} />
+                        </Box>
                     </Grid>
                 ))}
             </Grid>
 
             {/* Pagination */}
             {products?.length !== 0 ? (
-                <Pagination count={count} page={page} siblingCount={1} onChange={handleChangePagination} />
+                <Pagination 
+                    count={count} 
+                    page={page} 
+                    siblingCount={0} // Évite le dépassement sur petit écran
+                    boundaryCount={1}
+                    onChange={handleChangePagination} 
+                    sx={{
+                        '& .MuiPagination-ul': { justifyContent: 'center' }
+                    }}
+                />
             ) : (
-                <Typography variant="h5" sx={{ mt: -1 }}>
+                <Typography variant="h5" sx={{ mt: -1, textAlign: 'center', fontSize: { xs: '1.2rem', md: '1.5rem'} }}>
                     Aucun produit correspondant
                 </Typography>
             )}

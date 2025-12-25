@@ -8,7 +8,21 @@ type Props = {
 };
 
 const ActionButtons = ({ handleEdit, handleDelete }: Props) => (
-    <Box sx={{ position: 'absolute', top: 10, right: 10 }}>
+    <Box 
+        sx={{ 
+            
+            display: 'flex',
+            justifyContent: 'flex-end',
+            
+            position: { xs: 'relative', md: 'absolute' }, 
+            top: { md: 20 },   
+            right: { md: 20 }, 
+            
+            width: { xs: '100%', md: 'auto' }, 
+            marginBottom: { xs: 1, md: 0 },    
+            zIndex: 10 
+        }}
+    >
         <Fab size="small" color="primary" aria-label="edit" onClick={handleEdit} sx={{ mr: 1 }}>
             <EditIcon />
         </Fab>

@@ -17,7 +17,8 @@ import { Filters, ShopCard } from '../components';
 import { useAppContext } from '../context';
 import { ShopService } from '../services';
 import { ResponseArray, Shop } from '../types';
-import SearchBar from '../components/Navbar';
+import SearchBar from '../components/Navbar'; // Assure-toi que ce composant supporte d'être dans une Box flexible
+
 const Home = () => {
     const navigate = useNavigate();
     const { setLoading } = useAppContext();
@@ -28,12 +29,11 @@ const Home = () => {
 
     const [sort, setSort] = useState<string>('');
     const [filters, setFilters] = useState<string>('');
-    // Etats pour la recherche Elasticsearch
     const [searchQuery, setSearchQuery] = useState<string>('');
 
     const handleSearch = (searchText: string) => {
         setSearchQuery(searchText);
-        setPageSelected(0); // Reset à la page 1
+        setPageSelected(0);
     };
 
     const getShops = () => {
@@ -49,9 +49,7 @@ const Home = () => {
                 filterParams.createdAfter,
                 filterParams.createdBefore
             );
-        }
-
-        else if (sort) {
+        } else if (sort) {
             promisedShops = ShopService.getShopsSorted(pageSelected, 9, sort);
         } else if (filters) {
             promisedShops = ShopService.getShopsFiltered(pageSelected, 9, filters);
@@ -61,13 +59,13 @@ const Home = () => {
         promisedShops
             .then((res) => {
                 setShops(res.data.content);
-                console.log(res.data.content);
                 setCount(res.data.totalPages);
                 setPage(res.data.pageable.pageNumber + 1);
             })
             .finally(() => setLoading(false));
     };
-     const parseFilters = (filterString: string) => {
+
+    const parseFilters = (filterString: string) => {
         const params: {
             inVacations?: boolean;
             createdAfter?: string;
@@ -105,30 +103,50 @@ const Home = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-            <Typography variant="h2">Les boutiques</Typography>
+        <Box 
+            sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                gap: { xs: 3, md: 5 } // Moins d'espace entre les éléments sur mobile
+            }}
+        >
+            {/* Titre responsive : plus petit sur mobile (h4) */}
+            <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3.75rem' }, textAlign: 'center' }}>
+                Les boutiques
+            </Typography>
 
+            {/* Bouton Ajouter : Aligné à droite sur PC, Centré ou pleine largeur sur Mobile */}
             <Box
                 sx={{
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'row',
-                    justifyContent: 'flex-end',
+                    justifyContent: { xs: 'center', md: 'flex-end' }, // Centré sur mobile
                 }}
             >
-                <Fab variant="extended" color="primary" aria-label="add" onClick={() => navigate('/shop/create')}>
+                <Fab 
+                    variant="extended" 
+                    color="primary" 
+                    aria-label="add" 
+                    onClick={() => navigate('/shop/create')}
+                    size="medium" // Un peu plus petit pour être discret
+                >
                     <AddIcon sx={{ mr: 1 }} />
                     Ajouter une boutique
                 </Fab>
             </Box>
 
-            {/* Sort and filters */}
+            {/* Barre d'outils : Sort, Search, Filters */}
             <Box
                 sx={{
                     width: '100%',
                     display: 'flex',
-                    flexDirection: 'row',
+                    // MOBILE : Colonne (empilés) | DESKTOP : Ligne (côte à côte)
+                    flexDirection: { xs: 'column', md: 'row' }, 
                     justifyContent: 'space-between',
+                    alignItems: { xs: 'stretch', md: 'center' }, // 'stretch' force la largeur 100% sur mobile
+                    gap: 2 // Espace entre les éléments quand ils sont empilés
                 }}
             >
                 <FormControl sx={{ minWidth: 200 }}>
@@ -148,24 +166,50 @@ const Home = () => {
                         <MenuItem value="nbProducts">Nombre de produits</MenuItem>
                     </Select>
                 </FormControl>
-                <SearchBar onSearch={handleSearch} />
-                <Filters setUrlFilters={setFilters} setSort={setSort} sort={sort} setSearchQuery={setSearchQuery} />
+                
+                {/* On enveloppe SearchBar et Filters pour qu'ils s'adaptent */}
+                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+                     <SearchBar onSearch={handleSearch} />
+                </Box>
+                
+                <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}>
+                    <Filters setUrlFilters={setFilters} setSort={setSort} sort={sort} setSearchQuery={setSearchQuery} />
+                </Box>
             </Box>
 
-            {/* Shops */}
-            <Grid container alignItems="center" rowSpacing={3} columnSpacing={3}>
+            {/* Grille des Boutiques */}
+            <Grid container alignItems="stretch" rowSpacing={3} columnSpacing={3}>
                 {shops?.map((shop) => (
-                    <Grid item key={shop.id} xs={4}>
-                        <ShopCard shop={shop} />
+                    <Grid 
+                        item 
+                        key={shop.id} 
+                        xs={12} // Mobile : 1 colonne (prend toute la largeur)
+                        sm={6}  // Tablette : 2 colonnes
+                        md={4}  // Desktop : 3 colonnes
+                    >
+                        {/* On ajoute height: '100%' pour que toutes les cartes aient la même hauteur */}
+                        <Box sx={{ height: '100%' }}>
+                            <ShopCard shop={shop} />
+                        </Box>
                     </Grid>
                 ))}
             </Grid>
 
             {/* Pagination */}
             {shops?.length !== 0 ? (
-                <Pagination count={count} page={page} siblingCount={1} onChange={handleChangePagination} />
+                <Pagination 
+                    count={count} 
+                    page={page} 
+                    siblingCount={0} // Réduit la taille de la pagination sur mobile
+                    boundaryCount={1}
+                    onChange={handleChangePagination} 
+                    size="small" // Plus petit sur mobile par défaut, ou conditionnel
+                    sx={{
+                        '& .MuiPagination-ul': { justifyContent: 'center' }
+                    }}
+                />
             ) : (
-                <Typography variant="h5" sx={{ mt: -1 }}>
+                <Typography variant="h5" sx={{ mt: -1, textAlign: 'center' }}>
                     Aucune boutique correspondante
                 </Typography>
             )}

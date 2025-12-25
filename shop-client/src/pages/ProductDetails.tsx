@@ -1,4 +1,4 @@
-import { Paper, Typography } from '@mui/material';
+import { Paper, Typography, Box, Stack } from '@mui/material'; // Ajout de Box et Stack
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ActionButtons } from '../components';
@@ -56,43 +56,64 @@ const ProductDetails = () => {
             elevation={1}
             sx={{
                 position: 'relative',
-                padding: 4,
+                padding: { xs: 2, md: 4 }, 
+                marginTop: { xs: 2, md: 4 }, 
+                overflow: 'hidden' 
             }}
         >
+            
             <ActionButtons handleDelete={handleDelete} handleEdit={handleEdit} />
 
-            <Typography variant="h3" sx={{ textAlign: 'center', marginBottom: 3 }}>
+            <Typography 
+                variant="h3" 
+                sx={{ 
+                    textAlign: 'center', 
+                    marginBottom: 3,
+                    fontSize: { xs: '2rem', md: '3rem' }, 
+                    wordBreak: 'break-word' 
+                }}
+            >
                 {formattedProduct.name}
             </Typography>
-            <Typography variant="h6">Prix : {priceFormatter(formattedProduct.price)}</Typography>
-            {formattedProduct.description && (
-                <Typography sx={{ mt: 1.5 }} color="text.secondary">
-                    Description : {formattedProduct.description}
+
+            
+            <Stack spacing={2}>
+                <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
+                    Prix : {priceFormatter(formattedProduct.price)}
                 </Typography>
-            )}
-            <Typography sx={{ mt: 1.5 }}>
-                Boutique :{' '}
-                {formattedProduct.shop?.name ? (
-                    <Link to={`/shop/${formattedProduct.shop?.id}`} style={{ color: '#607d8b' }}>
-                        {formattedProduct.shop?.name}
-                    </Link>
-                ) : (
-                    "N'appartient à aucune boutique"
+
+                {formattedProduct.description && (
+                    <Typography color="text.secondary" sx={{ textAlign: 'justify' }}>
+                        <Box component="span" sx={{ fontWeight: 'bold', color: 'text.primary' }}>Description : </Box> 
+                        {formattedProduct.description}
+                    </Typography>
                 )}
-            </Typography>
-            <Typography sx={{ mt: 1.5, fontStyle: 'italic' }}>
-                Catégories : {''}
-                {formattedProduct.categories.length === 0
-                    ? 'Aucune'
-                    : formattedProduct.categories.map((cat, index) => (
-                          <Fragment key={cat.id}>
-                              <Link to={`/category/${cat.id}`} style={{ color: '#607d8b' }}>
-                                  {cat.name}
-                              </Link>
-                              <span>{index === formattedProduct.categories.length - 1 ? '' : ', '}</span>
-                          </Fragment>
-                      ))}
-            </Typography>
+
+                <Typography>
+                    <Box component="span" sx={{ fontWeight: 'bold' }}>Boutique : </Box>
+                    {formattedProduct.shop?.name ? (
+                        <Link to={`/shop/${formattedProduct.shop?.id}`} style={{ color: '#607d8b', textDecoration: 'none', fontWeight: 500 }}>
+                            {formattedProduct.shop?.name}
+                        </Link>
+                    ) : (
+                        "N'appartient à aucune boutique"
+                    )}
+                </Typography>
+
+                <Typography sx={{ fontStyle: 'italic' }}>
+                    <Box component="span" sx={{ fontWeight: 'bold', fontStyle: 'normal' }}>Catégories : </Box>
+                    {formattedProduct.categories.length === 0
+                        ? 'Aucune'
+                        : formattedProduct.categories.map((cat, index) => (
+                            <Fragment key={cat.id}>
+                                <Link to={`/category/${cat.id}`} style={{ color: '#607d8b', textDecoration: 'none' }}>
+                                    {cat.name}
+                                </Link>
+                                <span>{index === formattedProduct.categories.length - 1 ? '' : ', '}</span>
+                            </Fragment>
+                        ))}
+                </Typography>
+            </Stack>
         </Paper>
     );
 };
