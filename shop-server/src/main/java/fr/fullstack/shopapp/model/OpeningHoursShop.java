@@ -2,19 +2,16 @@ package fr.fullstack.shopapp.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "openingHours")
+@Table(name = "openingHours", indexes = {
+        @Index(name = "idx_opening_shop_id", columnList = "shop_id")
+})
 public class OpeningHoursShop {
     @Column(nullable = false)
     @JsonFormat(pattern = "HH:mm:ss")
@@ -28,7 +25,7 @@ public class OpeningHoursShop {
     private int day;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)

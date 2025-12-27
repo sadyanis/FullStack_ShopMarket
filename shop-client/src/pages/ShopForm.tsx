@@ -56,6 +56,7 @@ const ShopForm = () => {
 
     const createShop = () => {
         setLoading(true);
+        console.log('Creating shop:', shop);
         ShopService.createShop(shop)
             .then(() => {
                 navigate('/');

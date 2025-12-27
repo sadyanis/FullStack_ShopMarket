@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "categories")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Size(min = 1, max = 255, message = "Name must be between 1 and 255 characters")

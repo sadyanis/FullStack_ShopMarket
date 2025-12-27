@@ -1,17 +1,6 @@
 package fr.fullstack.shopapp.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -20,20 +9,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {
+        @Index(name = "idx_product_shop_id", columnList = "shop_id")
+})
 public class Product {
     @ManyToMany
     @JoinTable(
             name = "products_categories",
             joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
+            inverseJoinColumns = @JoinColumn(name = "category_id"),
+            indexes = {
+                    @Index(name = "idx_prod_cat_product", columnList = "product_id"),
+                    @Index(name = "idx_prod_cat_category", columnList = "category_id")
+            })
     private List<Category> categories = new ArrayList<Category>();
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    // MODIFICATION ICI : Retour au JoinTable pour coller à votre SQL fill_tables.sql
+    @JoinTable(
+            name = "products_localized_product",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "localized_product_id"),
+            indexes = {
+                    // Exigence E_AME_20 respectée
+                    @Index(name = "idx_plp_prod", columnList = "product_id"),
+                    @Index(name = "idx_plp_loc", columnList = "localized_product_id")
+            }
+    )
     @Size(min = 1, message = "At least one name and one description must be provided")
     private List<@Valid LocalizedProduct> localizedProduct = new ArrayList<LocalizedProduct>();
 
@@ -43,6 +49,7 @@ public class Product {
     private Long price; // stocker les centimes
 
     @ManyToOne
+    @JoinColumn(name="shop_id")
     private Shop shop;
 
     public List<Category> getCategories() {

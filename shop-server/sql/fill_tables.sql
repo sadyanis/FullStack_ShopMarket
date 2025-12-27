@@ -719,3 +719,12 @@ insert into products_categories (product_id, category_id) values (292, 45);
 -- Hibernate Sequence --
 
 create sequence hibernate_sequence start 295 increment 1;
+
+
+-- Cela force les compteurs à se mettre à jour par rapport aux données insérées
+-- A la fin de fill_tables.sql
+SELECT setval(pg_get_serial_sequence('shops', 'id'), coalesce(max(id),0) + 1, false) FROM shops;
+SELECT setval(pg_get_serial_sequence('products', 'id'), coalesce(max(id),0) + 1, false) FROM products;
+SELECT setval(pg_get_serial_sequence('categories', 'id'), coalesce(max(id),0) + 1, false) FROM categories;
+SELECT setval(pg_get_serial_sequence('opening_hours', 'id'), coalesce(max(id),0) + 1, false) FROM opening_hours;
+SELECT setval(pg_get_serial_sequence('localized_product', 'id'), coalesce(max(id),0) + 1, false) FROM localized_product;

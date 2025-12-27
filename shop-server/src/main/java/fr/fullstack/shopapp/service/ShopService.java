@@ -1,5 +1,6 @@
 package fr.fullstack.shopapp.service;
 
+import fr.fullstack.shopapp.model.OpeningHoursShop;
 import fr.fullstack.shopapp.model.Product;
 import fr.fullstack.shopapp.model.Shop;
 import fr.fullstack.shopapp.repository.ShopRepository;
@@ -27,6 +28,8 @@ public class ShopService {
 
     @Transactional
     public Shop createShop(Shop shop) throws Exception {
+        // Validation des horaires
+        validateOpeningHours(shop.getOpeningHours());
         try {
             Shop newShop = shopRepository.save(shop);
             em.flush();
@@ -188,5 +191,32 @@ public class ShopService {
         }
 
         return null;
+    }
+    // Méthode privée pour vérifier les conflit d'horaires
+    private void validateOpeningHours(List<OpeningHoursShop> openingHours) throws Exception {
+        if (openingHours == null || openingHours.isEmpty()) {
+            return;
+
+        }
+        // comparer les crénaux
+        for (int i=0 ; i< openingHours.size(); i++) {
+            OpeningHoursShop hours1 = openingHours.get(i);
+            // l'heure de fin doit être après l'heure de début
+            if(!hours1.getCloseAt().isAfter(hours1.getOpenAt())){
+                throw new Exception("Pour le jour "+hours1.getDay() + " l'heur de fermeture (" + hours1.getCloseAt() + ") doit etre après l'heure d'ouverture ("+ hours1.getOpenAt()+") !");
+            }
+            for (int j = i+1 ; j< openingHours.size(); j++) {
+                OpeningHoursShop hours2 = openingHours.get(j);
+                // on compare que si c'est le meme jour
+                if (hours1.getDay() == hours2.getDay()) {
+                    boolean overlaps = hours1.getOpenAt().isBefore(hours2.getCloseAt()) && hours1.getCloseAt().isAfter(hours2.getOpenAt());
+                    if (overlaps) {
+                        throw new Exception("conflit d'horaire détecté le jour "+ hours1.getDay() + ": Les créneaux"+
+                                hours1.getOpenAt() + "-" + hours1.getCloseAt() + " et " +
+                                hours2.getOpenAt() + "-" + hours2.getCloseAt() + " se chevauchent");
+                    }
+                }
+            }
+        }
     }
 }
