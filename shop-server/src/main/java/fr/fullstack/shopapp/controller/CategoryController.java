@@ -37,28 +37,19 @@ public class CategoryController {
 
     @Operation(summary  = "Create a category")
     @PostMapping
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ErrorValidation.getErrorValidationMessage(errors));
-        }
-
-        try {
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) throws Exception {
+      
             return ResponseEntity.ok(service.createCategory(category));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+       
     }
 
     @Operation(summary = "Delete a category by its id")
     @DeleteMapping("/{id}")
-    public HttpStatus deleteCategory(@PathVariable long id) {
-        try {
+    public HttpStatus deleteCategory(@PathVariable long id) throws Exception {
+        
             service.deleteCategoryById(id);
             return HttpStatus.NO_CONTENT;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+      
     }
 
     
@@ -77,26 +68,15 @@ public class CategoryController {
 
     @Operation(summary = "Get a category by id")
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable long id) {
-        try {
+    public ResponseEntity<Category> getCategoryById(@PathVariable long id) throws Exception {
             return ResponseEntity.ok().body(service.getCategoryById(id));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
     }
 
     @Operation(summary = "Update a category")
     @PutMapping
-    public ResponseEntity<Category> updateCategory(@Valid @RequestBody Category category, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ErrorValidation.getErrorValidationMessage(errors));
-        }
-
-        try {
+    public ResponseEntity<Category> updateCategory(@Valid @RequestBody Category category) throws Exception {
+        
             return ResponseEntity.ok().body(service.updateCategory(category));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        
     }
 }

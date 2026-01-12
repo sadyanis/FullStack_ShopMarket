@@ -38,10 +38,16 @@ public class shopSearchService {
 
                     // 1. Recherche floue sur le nom
                     if (queryText != null && !queryText.trim().isEmpty()) {
-                        bool.must(f.match()
-                                .field("name")
-                                .matching(queryText)
-                                .fuzzy());
+                        if (queryText.length() <= 2){
+                            bool.must(f.wildcard()
+                                    .field("name")
+                                    .matching("*" + queryText.toLowerCase() + "*"));
+                        } else {
+                            bool.must(f.match()
+                                    .field("name")
+                                    .matching(queryText)
+                                    .fuzzy());
+                        }
                         hasCondition = true;
                     }
 

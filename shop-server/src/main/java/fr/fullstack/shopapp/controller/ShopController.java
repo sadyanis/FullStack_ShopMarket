@@ -42,28 +42,18 @@ public class ShopController {
 
     @Operation(summary = "Create a shop")
     @PostMapping
-    public ResponseEntity<Shop> createShop(@Valid @RequestBody Shop shop, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ErrorValidation.getErrorValidationMessage(errors));
-        }
-
-        try {
+    public ResponseEntity<Shop> createShop(@Valid @RequestBody Shop shop)throws Exception {
+            // gestion des exception par le GlobalExceptionHandler
             return ResponseEntity.ok(service.createShop(shop));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
     }
 
     @Operation(summary = "Delete a shop by its id")
     @DeleteMapping("/{id}")
-    public HttpStatus deleteShop(@PathVariable long id) {
-        try {
+    public HttpStatus deleteShop(@PathVariable long id) throws Exception {
+        
             service.deleteShopById(id);
             return HttpStatus.NO_CONTENT;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+       
     }
 
    @GetMapping
@@ -95,27 +85,15 @@ public ResponseEntity<Page<Shop>> getAllShops(
 
     @Operation(summary = "Get a shop by id")
     @GetMapping("/{id}")
-    public ResponseEntity<Shop> getShopById(@PathVariable long id) {
-        try {
+    public ResponseEntity<Shop> getShopById(@PathVariable long id) throws Exception {
             return ResponseEntity.ok().body(service.getShopById(id));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
     }
 
     @Operation(summary = "Update a shop")
     @PutMapping
-    public ResponseEntity<Shop> updateShop(@Valid @RequestBody Shop shop, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ErrorValidation.getErrorValidationMessage(errors));
-        }
-
-        try {
-            return ResponseEntity.ok().body(service.updateShop(shop));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    public ResponseEntity<Shop> updateShop(@Valid @RequestBody Shop shop) throws Exception {
+        
+        return ResponseEntity.ok().body(service.updateShop(shop));
     }
     @Operation(summary = "Searche for shops using elasticsearch")
     @GetMapping("/search")

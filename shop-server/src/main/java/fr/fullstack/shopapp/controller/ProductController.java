@@ -38,38 +38,27 @@ public class ProductController {
 
     @Operation(summary = "Create a product")
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ErrorValidation.getErrorValidationMessage(errors));
-        }
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) throws Exception {
 
-        try {
+        
             return ResponseEntity.ok(service.createProduct(product));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
     }
 
     @Operation(summary = "Delete a product by its id")
     @DeleteMapping("/{id}")
-    public HttpStatus deleteProduct(@PathVariable long id) {
-        try {
+    public HttpStatus deleteProduct(@PathVariable long id) throws Exception {
+        
             service.deleteProductById(id);
             return HttpStatus.NO_CONTENT;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        
+          
     }
 
     @Operation(summary = "Get a product by id")
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable long id) {
-        try {
+    public ResponseEntity<Product> getProductById(@PathVariable long id) throws Exception {
             return ResponseEntity.ok().body(service.getProductById(id));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        
     }
 
     @GetMapping
@@ -92,26 +81,16 @@ public class ProductController {
 }
     @Operation(summary = "Set  product to a shop")
     @GetMapping("/{productId}/shop/{shopId}")
-    public ResponseEntity<Product> setProductShopId(@PathVariable long productId , @PathVariable long shopId) {
+    public ResponseEntity<Product> setProductShopId(@PathVariable long productId , @PathVariable long shopId) throws Exception {
         // to complete
-        try {
             return ResponseEntity.ok(service.setProductToShop(productId,shopId));
-        }catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        
     }
     @Operation(summary = "Update a product")
     @PutMapping
-    public ResponseEntity<Product> updateProduct(@Valid @RequestBody Product product, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ErrorValidation.getErrorValidationMessage(errors));
-        }
+    public ResponseEntity<Product> updateProduct(@Valid @RequestBody Product product) throws Exception {
+       
 
-        try {
             return ResponseEntity.ok().body(service.updateProduct(product));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
     }
 }

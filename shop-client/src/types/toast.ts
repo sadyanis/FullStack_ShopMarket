@@ -1,5 +1,5 @@
 type Toast = {
-    severity: 'success' | 'error';
+    severity: 'success' | 'error' | 'info' | 'warning';
     message: string;
 };
 

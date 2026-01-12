@@ -14,9 +14,12 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Loader from './Loader';
 import SwitchLanguage from './SwitchLanguage';
+import { useToastContext } from '../context';
+import { injectToast } from '../utils/http';
+
 
 type Props = {
     children: JSX.Element;
@@ -33,6 +36,14 @@ const drawerWidth = 240;
 const Layout = ({ children }: Props) => {
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    // 4. Recuperation de la fonction de toast depuis le contexte
+    const { setToast} = useToastContext();
+    useEffect(() => {
+        injectToast((toast) => {
+            setToast(toast);
+        });
+    }, [setToast]);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);

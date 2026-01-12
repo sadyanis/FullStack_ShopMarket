@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
+import http from '../utils/http';
 import { MinimalProduct, Product, ResponseArray } from '../types';
 
 export function getProducts(page: number, size: number): Promise<ResponseArray<Product>> {
-    return axios.get(`${process.env.REACT_APP_API}/products?page=${page}&size=${size}`);
+    return http.get(`/products?page=${page}&size=${size}`);
 }
 
 export function getProductsbyShop(shopId: string, page: number, size: number): Promise<ResponseArray<Product>> {
-    return axios.get(`${process.env.REACT_APP_API}/products?shopId=${shopId}&page=${page}&size=${size}`);
+    return http.get(`/products?shopId=${shopId}&page=${page}&size=${size}`);
 }
 
 export function getProductsbyShopAndCategory(
@@ -15,23 +16,23 @@ export function getProductsbyShopAndCategory(
     page: number,
     size: number,
 ): Promise<ResponseArray<Product>> {
-    return axios.get(
-        `${process.env.REACT_APP_API}/products?shopId=${shopId}&categoryId=${categoryId}&page=${page}&size=${size}`,
+    return http.get(
+        `/products?shopId=${shopId}&categoryId=${categoryId}&page=${page}&size=${size}`,
     );
 }
 
 export function getProduct(id: string): Promise<AxiosResponse<Product>> {
-    return axios.get(`${process.env.REACT_APP_API}/products/${id}`);
+    return http.get(`/products/${id}`);
 }
 
 export function createProduct(product: MinimalProduct): Promise<AxiosResponse<Product>> {
-    return axios.post(`${process.env.REACT_APP_API}/products`, product);
+    return http.post(`/products`, product);
 }
 
 export function editProduct(product: MinimalProduct): Promise<AxiosResponse<Product>> {
-    return axios.put(`${process.env.REACT_APP_API}/products`, product);
+    return http.put(`/products`, product);
 }
 
 export function deleteProduct(id: string): Promise<AxiosResponse<Product>> {
-    return axios.delete(`${process.env.REACT_APP_API}/products/${id}`);
+    return http.delete(`/products/${id}`);
 }
