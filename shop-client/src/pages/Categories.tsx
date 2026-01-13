@@ -55,7 +55,11 @@ const Categories = () => {
             {/* Categories */}
             <Grid container alignItems="center" rowSpacing={3} columnSpacing={3}>
                 {categories?.map((category) => (
-                    <Grid item key={category.id} xs={4}>
+                    <Grid item key={category.id} 
+                                                 xs={12}
+                                                 sm={6}
+                                                 md={4}
+                                                 sx={{ display: 'flex' }}>
                         <CategoryCard category={category} />
                     </Grid>
                 ))}
