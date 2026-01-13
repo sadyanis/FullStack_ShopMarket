@@ -20,7 +20,8 @@ const AppContext = createContext<AppContextInterface>({
 });
 
 type Props = {
-    children: JSX.Element;
+    //children: JSX.Element;
+    children: React.ReactNode;
 };
 
 export function AppProvider({ children }: Props) {

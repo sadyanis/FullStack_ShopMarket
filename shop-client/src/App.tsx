@@ -4,6 +4,7 @@ import './assets/App.css';
 import { Layout } from './components';
 import { AppProvider, myTheme, ToastProvider } from './context';
 import routes from './routes/routes';
+import React from "react";
 
 const App = () => {
     return (
@@ -19,7 +20,8 @@ const App = () => {
                                         path={route.path}
                                         element={
                                             <Layout>
-                                                <route.element />
+                                                //{route.element}
+                                               <> {React.createElement(route.element)} </>
                                             </Layout>
                                         }
                                     />

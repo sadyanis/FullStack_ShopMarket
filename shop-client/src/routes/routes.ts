@@ -9,38 +9,40 @@ import {
     ShopForm,
 } from '../pages';
 import CategoryForm from '../pages/CategoryForm';
+import { FC } from "react";
 
 type Routes = {
     name: string;
     path: string;
-    element: () => JSX.Element;
+    //element: () => React.ReactNode;
+    element: FC;
 }[];
 
 const routes: Routes = [
     {
         name: 'Home',
         path: '/',
-        element: Home,
+        element: Home ,
     },
     {
         name: 'ShopDetails',
         path: '/shop/:id',
-        element: ShopDetails,
+        element: ShopDetails ,
     },
     {
         name: 'CreateShop',
         path: '/shop/create',
-        element: ShopForm,
+        element: ShopForm ,
     },
     {
         name: 'EditShop',
         path: '/shop/edit/:id',
-        element: ShopForm,
+        element: ShopForm ,
     },
     {
         name: 'Products',
         path: '/product',
-        element: Products,
+        element: Products ,
     },
     {
         name: 'ProductDetails',
@@ -50,7 +52,7 @@ const routes: Routes = [
     {
         name: 'CreateProduct',
         path: '/product/create',
-        element: ProductForm,
+        element: ProductForm ,
     },
     {
         name: 'EditProduct',
@@ -60,7 +62,7 @@ const routes: Routes = [
     {
         name: 'Categories',
         path: '/category',
-        element: Categories,
+        element: Categories ,
     },
     {
         name: 'CategoryDetails',

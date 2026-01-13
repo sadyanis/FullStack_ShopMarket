@@ -13,7 +13,8 @@ const ToastContext = createContext<ToastContextInterface>({
 });
 
 type Props = {
-    children: JSX.Element;
+    //children: JSX.Element;
+     children: React.ReactNode;
 };
 
 export function ToastProvider({ children }: Props) {

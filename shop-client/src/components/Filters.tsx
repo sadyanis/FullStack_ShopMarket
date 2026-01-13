@@ -116,8 +116,15 @@ const Filters = ({ setUrlFilters, setSort, sort, setSearchQuery }: Props) => {
                             format="DD/MM/YYYY"
                             value={filters.createdAfter}
                             onChange={(v: Dayjs | null) => handleChange('createdAfter', v)}
-                            renderInput={(params:any) => <TextField {...params} />}
-                        />
+                            //renderInput={(params:any) => <TextField {...params} />}
+                            slots={{ textField: TextField }}
+                            slotProps={{
+                                 textField: {
+                                 fullWidth: true
+                                 }
+                            }}                        
+
+                    />
                     </LocalizationProvider>
                 </DialogContent>
 
@@ -128,7 +135,7 @@ const Filters = ({ setUrlFilters, setSort, sort, setSearchQuery }: Props) => {
                             format="DD/MM/YYYY"
                             value={filters.createdBefore}
                             onChange={(v: Dayjs | null) => handleChange('createdBefore', v)}
-                            renderInput={(params) => <TextField {...params} />}
+                            //renderInput={(params) => <TextField {...params} />}
                         />
                     </LocalizationProvider>
                 </DialogContent>

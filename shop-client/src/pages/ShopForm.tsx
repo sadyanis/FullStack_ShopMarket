@@ -23,6 +23,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Dayjs } from 'dayjs';
 import { MinimalShop, ObjectPropertyString } from '../types';
 import { useAppContext, useToastContext } from '../context';
+import dayjs from "dayjs";
 
 const schema = (shop: MinimalShop) => ({
     name: shop.name ? '' : 'Ce champ est requis',
@@ -245,22 +246,24 @@ const ShopForm = () => {
                                         <TimePicker
                                             label="Ouvre à"
                                             ampm={false}
-                                            value={`2014-08-18T${openingHour.openAt}`}
+                                            //value={`2014-08-18T${openingHour.openAt}`}
+                                            value={dayjs(`2014-08-18T${openingHour.openAt}`)}
                                             onChange={(v: Dayjs | null) =>
                                                 handleChange(index, 'openAt', v?.format('HH:mm:ss'))
                                             }
-                                            renderInput={(params) => <TextField {...params} />}
+                                            //renderInput={(params) => <TextField {...params} />}
                                         />
                                     </LocalizationProvider>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <TimePicker
                                             label="Ferme à"
                                             ampm={false}
-                                            value={`2014-08-18T${openingHour.closeAt}`}
+                                            //value={`2014-08-18T${openingHour.closeAt}`}
+                                            value={dayjs(`2014-08-18T${openingHour.openAt}`)}
                                             onChange={(v: Dayjs | null) =>
                                                 handleChange(index, 'closeAt', v?.format('HH:mm:ss'))
                                             }
-                                            renderInput={(params) => <TextField {...params} />}
+                                            //renderInput={(params) => <TextField {...params} />}
                                         />
                                     </LocalizationProvider>
                                 </Box>

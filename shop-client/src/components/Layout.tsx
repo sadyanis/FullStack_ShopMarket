@@ -22,7 +22,8 @@ import { injectToast } from '../utils/http';
 
 
 type Props = {
-    children: JSX.Element;
+     //children: JSX.Element;
+     children: React.ReactNode;
 };
 
 const navItems = [
