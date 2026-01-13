@@ -23,8 +23,11 @@ const ProductCard = ({ product, displayShop = false }: Props) => {
 
     return (
         <Card
-            sx={{ minWidth: 275, height: displayShop ? 270 : 230, cursor: 'pointer' }}
-            onClick={() => navigate(`/product/${formattedProduct.id}`)}
+            sx={{ width: '100%',
+                  minWidth: 0,
+                  display: 'flex',
+                  flexDirection: 'column', height: displayShop ? 270 : 230, cursor: 'pointer' }}
+                  onClick={() => navigate(`/product/${formattedProduct.id}`)}
         >
             <CardContent>
                 <Typography variant="h4" color="text.primary" gutterBottom>

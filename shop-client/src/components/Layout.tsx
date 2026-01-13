@@ -36,6 +36,7 @@ const drawerWidth = 240;
 const Layout = ({ children }: Props) => {
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1030);
 
     // 4. Recuperation de la fonction de toast depuis le contexte
     const { setToast} = useToastContext();
@@ -48,7 +49,17 @@ const Layout = ({ children }: Props) => {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+    
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1030);
+        };
 
+        window.addEventListener('resize', handleResize);
+
+        
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
@@ -77,7 +88,7 @@ const Layout = ({ children }: Props) => {
                         aria-label="open drawer"
                         edge="start"
                         onClick={handleDrawerToggle}
-                        sx={{ mr: 2, display: { sm: 'none' } }}
+                        sx={{ mr: 2, display: isMobile ? 'block' : 'none' }}
                     >
                         <MenuIcon />
                     </IconButton>
@@ -91,7 +102,7 @@ const Layout = ({ children }: Props) => {
                         Gestion de boutiques
                     </Typography>
 
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                    <Box sx={{ display: isMobile ? 'none' : 'block'  }}>
                         {navItems.map((item) => (
                             <Button key={item.label} sx={{ color: '#fff' }} onClick={() => navigate(item.path)}>
                                 {item.label}
@@ -114,7 +125,7 @@ const Layout = ({ children }: Props) => {
                         keepMounted: true,
                     }}
                     sx={{
-                        display: { xs: 'block', sm: 'none' },
+                        display: isMobile ? 'block' : 'none',
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
                 >
