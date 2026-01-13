@@ -17,7 +17,7 @@ import { Filters, ShopCard } from '../components';
 import { useAppContext } from '../context';
 import { ShopService } from '../services';
 import { ResponseArray, Shop } from '../types';
-import SearchBar from '../components/Navbar'; // Assure-toi que ce composant supporte d'être dans une Box flexible
+import SearchBar from '../components/Navbar'; 
 
 const Home = () => {
     const navigate = useNavigate();
@@ -130,7 +130,7 @@ const Home = () => {
                     color="primary" 
                     aria-label="add" 
                     onClick={() => navigate('/shop/create')}
-                    size="medium" // Un peu plus petit pour être discret
+                    size="medium" 
                 >
                     <AddIcon sx={{ mr: 1 }} />
                     Ajouter une boutique
@@ -142,11 +142,11 @@ const Home = () => {
                 sx={{
                     width: '100%',
                     display: 'flex',
-                    // MOBILE : Colonne (empilés) | DESKTOP : Ligne (côte à côte)
+                    // MOBILE : Colonne empilés | DESKTOP : Ligne côte à côte
                     flexDirection: { xs: 'column', md: 'row' }, 
                     justifyContent: 'space-between',
-                    alignItems: { xs: 'stretch', md: 'center' }, // 'stretch' force la largeur 100% sur mobile
-                    gap: 2 // Espace entre les éléments quand ils sont empilés
+                    alignItems: { xs: 'stretch', md: 'center' }, 
+                    gap: 2 // Espace entre les éléments 
                 }}
             >
                 <FormControl sx={{ minWidth: 200 }}>
@@ -183,7 +183,7 @@ const Home = () => {
                     <Grid 
                         item 
                         key={shop.id} 
-                        xs={12} // Mobile : 1 colonne (prend toute la largeur)
+                        xs={12} // Mobile : 1 colonne 
                         sm={6}  // Tablette : 2 colonnes
                         md={4}  // Desktop : 3 colonnes
                     >
