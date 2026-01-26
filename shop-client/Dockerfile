@@ -1,5 +1,5 @@
 # Use a lighter version of Node as a parent image
-FROM node:19-alpine
+FROM node:24-alpine
 
 # Set the working directory to /app
 WORKDIR /app
@@ -17,4 +17,4 @@ COPY . /app
 EXPOSE 4200
 
 # Run the app when the container launches
-CMD ["npm", "start"]
+CMD ["npm", "start"]''

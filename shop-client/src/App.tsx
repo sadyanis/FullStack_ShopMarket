@@ -20,7 +20,6 @@ const App = () => {
                                         path={route.path}
                                         element={
                                             <Layout>
-                                                //{route.element}
                                                <> {React.createElement(route.element)} </>
                                             </Layout>
                                         }
