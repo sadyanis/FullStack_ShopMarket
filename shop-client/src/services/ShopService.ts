@@ -32,7 +32,6 @@ export function deleteShop(id: string): Promise<AxiosResponse<Shop>> {
     return http.delete(`/shops/${id}`);
 }
 // Fonction pour la recherche Elasticsearch
-// Nouvelle méthode pour la recherche Elasticsearch
 export function searchShops(
     page: number, 
     size: number, 

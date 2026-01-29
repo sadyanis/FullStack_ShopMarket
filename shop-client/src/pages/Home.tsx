@@ -183,11 +183,11 @@ const Home = () => {
                     <Grid 
                         item 
                         key={shop.id} 
-                        xs={12} // Mobile : 1 colonne (prend toute la largeur)
-                        sm={6}  // Tablette : 2 colonnes
-                        md={4}  // Desktop : 3 colonnes
+                        xs={12} // Mobile 
+                        sm={6}  // Tablette 
+                        md={4}  // Desktop 
                     >
-                        {/* On ajoute height: '100%' pour que toutes les cartes aient la même hauteur */}
+                        
                         <Box sx={{ height: '100%' }}>
                             <ShopCard shop={shop} />
                         </Box>
