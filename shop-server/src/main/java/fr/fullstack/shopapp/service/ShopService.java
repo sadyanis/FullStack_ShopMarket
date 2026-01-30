@@ -3,6 +3,7 @@ package fr.fullstack.shopapp.service;
 import fr.fullstack.shopapp.model.OpeningHoursShop;
 import fr.fullstack.shopapp.model.Product;
 import fr.fullstack.shopapp.model.Shop;
+import fr.fullstack.shopapp.repository.ProductRepository;
 import fr.fullstack.shopapp.repository.ShopRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ public class ShopService {
     @Autowired
     private ShopRepository shopRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
 
 
     @Transactional
@@ -65,7 +68,8 @@ public class ShopService {
         }
     }
 
-    @Transactional(readOnly = true)  // ADDED
+    
+    @Transactional(readOnly = true)
     public Page<Shop> getShopList(
             Optional<String> sortBy,
             Optional<Boolean> inVacations,
@@ -75,7 +79,7 @@ public class ShopService {
     ) {
         Page<Shop> result;
         
-        // SORT
+        
         if (sortBy.isPresent()) {
             switch (sortBy.get()) {
                 case "name":
@@ -87,18 +91,18 @@ public class ShopService {
                 default:
                     result = shopRepository.findByOrderByNbProductsAsc(pageable);
             }
-            return refreshShops(result);
+            return result; // Retour direct
         }
 
-        // FILTERS
+        
         Page<Shop> shopList = getShopListWithFilter(inVacations, createdBefore, createdAfter, pageable);
         if (shopList != null) {
-            return refreshShops(shopList);
+            return shopList; // Retour direct
         }
 
-        // NONE
+       
         result = shopRepository.findByOrderByIdAsc(pageable);
-        return refreshShops(result);
+        return result; //Retour direct
     }
 
     @Transactional
@@ -114,19 +118,22 @@ public class ShopService {
     }
 
     
-    private Page<Shop> refreshShops(Page<Shop> shops) {
-        shops.getContent().forEach(shop -> em.refresh(shop));
-        return shops;
-    }
+    // private Page<Shop> refreshShops(Page<Shop> shops) {
+    //     shops.getContent().forEach(shop -> em.refresh(shop));
+    //     return shops;
+    // }
 
     private void deleteNestedRelations(Shop shop) {
-        List<Product> products = shop.getProducts();
-        for (int i = 0; i < products.size(); i++) {
-            Product product = products.get(i);
-            product.setShop(null);
-            em.merge(product);
-            em.flush();
-        }
+        // List<Product> products = shop.getProducts();
+        // for (int i = 0; i < products.size(); i++) {
+        //     Product product = products.get(i);
+        //     product.setShop(null);
+        //     em.merge(product);
+        //     em.flush();
+        // }
+
+        productRepository.detachShopFromProducts(shop.getId());
+        shop.getProducts().clear();
     }
 
     

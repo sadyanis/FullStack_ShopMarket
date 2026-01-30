@@ -33,7 +33,7 @@ public class shopSearchService {
 
         SearchResult<Shop> result = searchSession.search(Shop.class)
                 .where(f -> {
-                    BooleanPredicateClausesStep<?> bool = f.bool();
+                    var bool = f.bool();
                     boolean hasCondition = false;
 
                     // 1. Recherche floue sur le nom
